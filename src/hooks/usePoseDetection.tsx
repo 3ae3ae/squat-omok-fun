@@ -186,7 +186,3 @@ export const usePoseDetection = ({
     jointPoints
   };
 };
-
-<lov-add-dependency>@tensorflow-models/pose-detection@2.1.3</lov-add-dependency>
-<lov-add-dependency>@tensorflow/tfjs-core@4.10.0</lov-add-dependency>
-<lov-add-dependency>@tensorflow/tfjs-backend-webgl@4.10.0</lov-add-dependency>
