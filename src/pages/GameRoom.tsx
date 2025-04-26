@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -8,11 +7,12 @@ import VideoFeed from '@/components/VideoFeed';
 import { useWebSocket, WebSocketMessage } from '@/hooks/useWebSocket';
 
 interface GameRoomParams {
+  [key: string]: string;
   roomId: string;
 }
 
 const GameRoom = () => {
-  const { roomId } = useParams<GameRoomParams>();
+  const { roomId } = useParams<keyof GameRoomParams>();
   const navigate = useNavigate();
   const [guestId, setGuestId] = useState<string | null>(localStorage.getItem('guestId'));
   const [isRoomMaster, setIsRoomMaster] = useState(false);
@@ -30,7 +30,6 @@ const GameRoom = () => {
 
   const webSocketUrl = roomId ? `wss://yourserver.com/ws/room/${roomId}` : null;
 
-  // Handle WebSocket messages
   const handleWebSocketMessage = useCallback((message: WebSocketMessage) => {
     console.log('Received WebSocket message:', message);
 
@@ -86,14 +85,12 @@ const GameRoom = () => {
     }
   }, [playerColor, roomId]);
 
-  // Initialize WebSocket connection
   const { sendMessage, isConnected } = useWebSocket(
     webSocketUrl, 
     guestId,
     handleWebSocketMessage
   );
 
-  // Effect for checking if guest ID exists
   useEffect(() => {
     if (!guestId) {
       toast.error("Guest ID not found. Redirecting to homepage.");
@@ -101,19 +98,15 @@ const GameRoom = () => {
     }
   }, [guestId, navigate]);
 
-  // Handle squat detection
   const handleSquatDetected = useCallback(() => {
-    // Send squat data to WebSocket
     sendMessage({
       type: 'my_squat',
       data: {}
     });
     
-    // Increment local squat counter
     setSquats(prev => {
       const newCount = prev + 1;
       
-      // Every 3 squats, allow placing a stone if it's the player's turn
       if (newCount % 3 === 0 && currentTurn === playerColor) {
         setCanPlaceStone(true);
         toast.success("You can now place a stone!");
@@ -123,38 +116,30 @@ const GameRoom = () => {
     });
   }, [sendMessage, currentTurn, playerColor]);
 
-  // Handle stone placement
   const handlePlaceStone = useCallback((x: number, y: number) => {
     if (!canPlaceStone || !isGameStarted || isGameEnded) return;
     
-    // Add stone locally
     const newStone: Stone = { x, y, color: playerColor };
     setStones(prevStones => [...prevStones, newStone]);
     
-    // Send stone placement to WebSocket
     sendMessage({
       type: 'place_stone',
       data: { x, y }
     });
     
-    // Update turn and reset stone placement permission
     setCurrentTurn(playerColor === 'black' ? 'white' : 'black');
     setCanPlaceStone(false);
   }, [canPlaceStone, isGameStarted, isGameEnded, playerColor, sendMessage]);
 
-  // Handle pose data update
   const handlePoseUpdate = useCallback((poseData: any[]) => {
-    // Send pose data through WebSocket
     sendMessage({
       type: 'my_pose',
       data: poseData
     });
   }, [sendMessage]);
 
-  // Effect for handling window unload/close
   useEffect(() => {
     const handleBeforeUnload = () => {
-      // Send a message that the player is leaving
       sendMessage({
         type: 'player_leaving',
         data: {}
@@ -169,7 +154,6 @@ const GameRoom = () => {
     };
   }, [sendMessage]);
 
-  // Handle leave room button
   const handleLeaveRoom = () => {
     navigate('/');
   };
@@ -177,7 +161,6 @@ const GameRoom = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-100 p-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header with room info */}
         <header className="mb-4 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gomoku-primary">Squat Gomoku</h1>
@@ -210,7 +193,6 @@ const GameRoom = () => {
         </header>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Game board */}
           <div className="lg:col-span-2 bg-white rounded-xl shadow-lg p-4 aspect-square">
             <GoBoard 
               stones={stones}
@@ -221,9 +203,7 @@ const GameRoom = () => {
             />
           </div>
           
-          {/* Right column with video feeds */}
           <div className="flex flex-col gap-4">
-            {/* Local player video */}
             <div className="bg-white rounded-xl shadow-lg p-4">
               <h3 className="text-lg font-semibold mb-3">Your Camera</h3>
               <div className="aspect-video">
@@ -238,7 +218,6 @@ const GameRoom = () => {
               </div>
             </div>
             
-            {/* Opponent video */}
             <div className="bg-white rounded-xl shadow-lg p-4">
               <h3 className="text-lg font-semibold mb-3">Opponent</h3>
               <div className="aspect-video">
@@ -254,7 +233,6 @@ const GameRoom = () => {
           </div>
         </div>
         
-        {/* Game status */}
         {isGameEnded && (
           <div className={`mt-6 p-4 rounded-lg text-center ${winner === playerColor ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
             <h2 className="text-2xl font-bold mb-2">
