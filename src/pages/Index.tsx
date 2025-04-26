@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/BaseComponents';
 import RoomList from '@/components/RoomList';
 import CreateRoomModal from '@/components/CreateRoomModal';
 import { toast } from 'sonner';
