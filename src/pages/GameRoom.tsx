@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -6,13 +7,14 @@ import GoBoard, { Stone } from '@/components/GoBoard';
 import VideoFeed from '@/components/VideoFeed';
 import { useWebSocket, WebSocketMessage } from '@/hooks/useWebSocket';
 
+// Update the interface to correctly define params
 interface GameRoomParams {
-  [key: string]: string;
   roomId: string;
 }
 
 const GameRoom = () => {
-  const { roomId } = useParams<keyof GameRoomParams>();
+  // Fix the useParams hook usage
+  const { roomId } = useParams<GameRoomParams>();
   const navigate = useNavigate();
   const [guestId, setGuestId] = useState<string | null>(localStorage.getItem('guestId'));
   const [isRoomMaster, setIsRoomMaster] = useState(false);
@@ -28,6 +30,7 @@ const GameRoom = () => {
   const [winningStones, setWinningStones] = useState<Stone[]>([]);
   const [opponentPoseData, setOpponentPoseData] = useState<any[]>([]);
 
+  // Use roomId with proper null check
   const webSocketUrl = roomId ? `wss://yourserver.com/ws/room/${roomId}` : null;
 
   const handleWebSocketMessage = useCallback((message: WebSocketMessage) => {
