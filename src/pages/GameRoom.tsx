@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/BaseComponents';
 import GoBoard, { Stone } from '@/components/GoBoard';
 import VideoFeed from '@/components/VideoFeed';
 import { useWebSocket, WebSocketMessage } from '@/hooks/useWebSocket';
