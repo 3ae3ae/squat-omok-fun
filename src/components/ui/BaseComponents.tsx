@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -8,7 +7,8 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as SwitchPrimitive from "@radix-ui/react-switch";
 import * as TogglePrimitive from "@radix-ui/react-toggle";
-import { Circle, Check } from "lucide-react";
+import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import { Circle, Check, PanelLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Button Component
@@ -234,3 +234,29 @@ export const Toggle = React.forwardRef<
 ));
 Toggle.displayName = TogglePrimitive.Root.displayName;
 
+// Separator Component
+export const Separator = React.forwardRef<
+  React.ElementRef<typeof SeparatorPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
+>(
+  (
+    { className, orientation = "horizontal", decorative = true, ...props },
+    ref
+  ) => (
+    <SeparatorPrimitive.Root
+      ref={ref}
+      decorative={decorative}
+      orientation={orientation}
+      className={cn(
+        "shrink-0 bg-border",
+        orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]",
+        className
+      )}
+      {...props}
+    />
+  )
+)
+Separator.displayName = SeparatorPrimitive.Root.displayName
+
+// Export the buttonVariants
+export { buttonVariants };
